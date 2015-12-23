@@ -28,6 +28,9 @@ import java.util.GregorianCalendar;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNotSame;
 import static org.junit.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNotSame;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Dmitry Buzdin

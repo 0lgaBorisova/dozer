@@ -21,6 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Map;
+import org.dozer.cache.CacheKeyFactory;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -66,7 +67,7 @@ public class ClassMappingsTest extends AbstractDozerTest{
     classMappings.add(String.class, Integer.class, mock(ClassMap.class));
     classMappings.add(String.class, Integer.class, "id", mock(ClassMap.class));
 
-    Map<String,ClassMap> result = classMappings.getAll();
+    Map<CacheKeyFactory.CacheKey,ClassMap> result = classMappings.getAll();
     assertEquals(2, result.size());
   }
 

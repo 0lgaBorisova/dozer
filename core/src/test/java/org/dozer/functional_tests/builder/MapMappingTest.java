@@ -36,6 +36,8 @@ import static junit.framework.Assert.assertNotSame;
 import static org.dozer.loader.api.FieldsMappingOptions.collectionStrategy;
 import static org.dozer.loader.api.TypeMappingOptions.mapId;
 import static org.junit.Assert.assertEquals;
+import static junit.framework.Assert.assertNotSame;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Dmitry Buzdin

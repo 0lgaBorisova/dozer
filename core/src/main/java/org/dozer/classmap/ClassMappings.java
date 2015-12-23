@@ -19,10 +19,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.dozer.util.MappingUtils;
 
 import java.lang.reflect.Modifier;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import org.dozer.cache.CacheKeyFactory;
+import org.dozer.cache.CacheKeyFactory.CacheKey;
+import static org.dozer.cache.CacheKeyFactory.create;
 
 /**
  * Internal class that determines the appropriate class mapping to be used for
@@ -35,31 +39,27 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ClassMappings {
 
   // Cache key --> Mapping Structure
-  private Map<String, ClassMap> classMappings = new ConcurrentHashMap<String, ClassMap>();
-  private ClassMapKeyFactory keyFactory;
+  private Map<CacheKey, ClassMap> classMappings = new ConcurrentHashMap<CacheKey, ClassMap>();
 
-  public ClassMappings() {
-    keyFactory = new ClassMapKeyFactory();
-  }
-
+ 
   // Default mappings. May be ovewritten due to multiple threads generating same mapping
   public void addDefault(Class<?> srcClass, Class<?> destClass, ClassMap classMap) {
-    classMappings.put(keyFactory.createKey(srcClass, destClass), classMap);
+    classMappings.put(create(srcClass, destClass), classMap);
   }
 
   public void add(Class<?> srcClass, Class<?> destClass, ClassMap classMap) {
-    ClassMap result = classMappings.put(keyFactory.createKey(srcClass, destClass), classMap);
+    ClassMap result = classMappings.put(create(srcClass, destClass), classMap);
     failOnDuplicate(result, classMap);
   }
 
   public void add(Class<?> srcClass, Class<?> destClass, String mapId, ClassMap classMap) {
-    ClassMap result = classMappings.put(keyFactory.createKey(srcClass, destClass, mapId), classMap);
+    ClassMap result = classMappings.put(create(srcClass, destClass, mapId), classMap);
     failOnDuplicate(result, classMap);
   }
 
   public void addAll(ClassMappings additionalClassMappings) {
-    Map<String, ClassMap> newMappings = additionalClassMappings.getAll();
-    for (Entry<String, ClassMap> entry : newMappings.entrySet()) {
+    Map<CacheKey, ClassMap> newMappings = additionalClassMappings.getAll();
+    for (Entry<CacheKey, ClassMap> entry : newMappings.entrySet()) {
       ClassMap result = classMappings.put(entry.getKey(), entry.getValue());
       failOnDuplicate(result, entry.getValue());
     }
@@ -72,8 +72,8 @@ public class ClassMappings {
     }
   }
 
-  public Map<String, ClassMap> getAll() {
-    return new HashMap<String, ClassMap>(classMappings);
+  public Map<CacheKey, ClassMap> getAll() {
+    return new HashMap<CacheKey, ClassMap>(classMappings);
   }
 
   public long size() {
@@ -81,46 +81,45 @@ public class ClassMappings {
   }
 
   public ClassMap find(Class<?> srcClass, Class<?> destClass) {
-    return classMappings.get(keyFactory.createKey(srcClass, destClass));
+    return CacheKey.getFrom(classMappings, srcClass, destClass);
   }
-
-  public boolean contains(Class<?> srcClass, Class<?> destClass, String mapId) {
-    String key = keyFactory.createKey(srcClass, destClass, mapId);
-    return classMappings.containsKey(key);
-  }
-
-  public ClassMap find(Class<?> srcClass, Class<?> destClass, String mapId) {
-    final String key = keyFactory.createKey(srcClass, destClass, mapId);
-    ClassMap mapping = classMappings.get(key);
-
-    if (mapping == null) {
-      mapping = findInterfaceMapping(destClass, srcClass, mapId);
+  
+    @Deprecated
+    public boolean contains(Class<?> srcClass, Class<?> destClass, String mapId) {
+        return CacheKey.containsIn(classMappings, srcClass, destClass, mapId);
     }
 
-    // one more try...
-    // if the mapId is not null looking up a map is easy
-    if (!MappingUtils.isBlankOrNull(mapId) && mapping == null) {
-      // probably a more efficient way to do this...
-      for (Entry<String, ClassMap> entry : classMappings.entrySet()) {
-        ClassMap classMap = entry.getValue();
-        if (StringUtils.equals(classMap.getMapId(), mapId)
-                && classMap.getSrcClassToMap().isAssignableFrom(srcClass)
-                && classMap.getDestClassToMap().isAssignableFrom(destClass)) {
-          return classMap;
-        } else if (StringUtils.equals(classMap.getMapId(), mapId) && srcClass.equals(destClass)) {
-          return classMap;
+    public ClassMap find(Class<?> srcClass, Class<?> destClass, String mapId) {
+        ClassMap mapping = CacheKey.getFrom(classMappings, srcClass, destClass, mapId);
+
+        if (mapping == null) {
+            mapping = findInterfaceMapping(destClass, srcClass, mapId);
         }
-      }
 
-      // If map-id was specified and mapping was not found, then fail
-      MappingUtils.throwMappingException("Class mapping not found by map-id: " + key);
+        // one more try...
+        // if the mapId is not null looking up a map is easy
+        if (!MappingUtils.isBlankOrNull(mapId) && mapping == null) {
+            // probably a more efficient way to do this...
+            for (Entry<CacheKey, ClassMap> entry : classMappings.entrySet()) {
+                ClassMap classMap = entry.getValue();
+                if (StringUtils.equals(classMap.getMapId(), mapId)
+                        && classMap.getSrcClassToMap().isAssignableFrom(srcClass)
+                        && classMap.getDestClassToMap().isAssignableFrom(destClass)) {
+                    return classMap;
+                } else if (StringUtils.equals(classMap.getMapId(), mapId) && srcClass.equals(destClass)) {
+                    return classMap;
+                }
+            }
+            CacheKey key = create(srcClass, destClass, mapId);
+            // If map-id was specified and mapping was not found, then fail
+            MappingUtils.throwMappingException("Class mapping not found by map-id: " + key);
+        }
+
+        return mapping;
     }
 
-    return mapping;
-  }
-
-  // Look for an interface mapping
-  private ClassMap findInterfaceMapping(Class<?> destClass, Class<?> srcClass, String mapId) {
+    // Look for an interface mapping
+    private ClassMap findInterfaceMapping(Class<?> destClass, Class<?> srcClass, String mapId) {
     // Use object array for keys to avoid any rare thread synchronization issues
     // while iterating over the custom mappings.
     // See bug #1550275.

@@ -22,6 +22,7 @@ package org.dozer.vo;
  */
 public class A {
   private B b;
+  private C c;
 
   public B getB() {
     return b;
@@ -30,4 +31,17 @@ public class A {
   public void setB(B b) {
     this.b = b;
   }
+
+    public C getC() {
+        return c;
+    }
+
+    public void setC(C c) {
+        this.c = c;
+    }
+
+    @Override
+    public String toString() {
+        return "A{" + "b=" + b + ", c=" + c + '}';
+    }
 }

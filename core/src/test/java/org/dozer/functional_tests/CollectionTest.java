@@ -25,6 +25,7 @@ import junit.framework.Assert;
 import org.dozer.vo.ArrayDest;
 import org.dozer.vo.ArraySource;
 import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Collections and arrays test

@@ -20,6 +20,8 @@ import static junit.framework.Assert.fail;
 import org.dozer.MappingException;
 import org.junit.Test;
 import org.xml.sax.SAXException;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.fail;
 
 /**
  * @author dmitry.buzdin

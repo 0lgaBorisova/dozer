@@ -19,46 +19,58 @@ import org.dozer.DozerEventListener;
 import org.dozer.util.MappingUtils;
 
 import java.util.List;
-
+import org.dozer.classmap.ClassMap;
+import org.dozer.fieldmap.FieldMap;
 
 /**
- * Internal class that handles dozer events and invokes any public event listeners. Only intended for internal use.
- * 
+ * Internal class that handles dozer events and invokes any public event
+ * listeners. Only intended for internal use.
+ *
  * @author garsombke.franz
  */
 public final class DozerEventManager implements EventManager {
-  
-  private final List<? extends DozerEventListener> eventListeners;
 
-  public DozerEventManager(List<? extends DozerEventListener> eventListeners) {
-    this.eventListeners = eventListeners;
-  }
+    private final List<? extends DozerEventListener> eventListeners;
 
-  public void fireEvent(DozerEvent event) {
-    // If no listeners were specified, then just return.
-    if (eventListeners == null) {
-      return;
+    public DozerEventManager(List<? extends DozerEventListener> eventListeners) {
+        this.eventListeners = eventListeners;
     }
-    DozerEventType eventType = event.getType();
-    for (DozerEventListener listener : eventListeners) {
-      switch (eventType) {
-       case MAPPING_STARTED:
-         listener.mappingStarted(event);
-         break;
-       case MAPPING_PRE_WRITING_DEST_VALUE:
-         listener.preWritingDestinationValue(event);
-         break;
-       case MAPPING_POST_WRITING_DEST_VALUE:
-         listener.postWritingDestinationValue(event);
-         break;
-       case MAPPING_FINISHED:
-         listener.mappingFinished(event);
-         break;
-       default:
-         MappingUtils.throwMappingException("Unsupported event type: " + eventType);
-       break;
-      }
+
+    @Override
+    public void fireEvent(DozerEvent event) {
+        // If no listeners were specified, then just return.
+        if (eventListeners == null) {
+            return;
+        }
+        DozerEventType eventType = event.getType();
+        for (DozerEventListener listener : eventListeners) {
+            switch (eventType) {
+                case MAPPING_STARTED:
+                    listener.mappingStarted(event);
+                    break;
+                case MAPPING_PRE_WRITING_DEST_VALUE:
+                    listener.preWritingDestinationValue(event);
+                    break;
+                case MAPPING_POST_WRITING_DEST_VALUE:
+                    listener.postWritingDestinationValue(event);
+                    break;
+                case MAPPING_FINISHED:
+                    listener.mappingFinished(event);
+                    break;
+                default:
+                    MappingUtils.throwMappingException("Unsupported event type: " + eventType);
+                    break;
+            }
+        }
     }
-  }
+
+    @Override
+    public void fireEvent(DozerEventType type, ClassMap classMap, FieldMap fieldMap, Object sourceObject, Object destinationObject, Object destinationValue) {
+        if (eventListeners == null) {
+            return;
+        }
+        //TODO: don't create new Instance of DozerEvent
+        fireEvent(new DozerEvent(type, classMap, fieldMap, sourceObject, destinationObject, destinationValue));
+    }
 
 }

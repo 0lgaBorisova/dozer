@@ -57,7 +57,7 @@ public class CustomConverterContainerTest extends AbstractDozerTest {
   public void testGetCustomConverter_Cached() {
     CustomConverterDescription description = new CustomConverterDescription();
     converters.add(description);
-    cache.put(CacheKeyFactory.createKey(String.class, Integer.class), Object.class);
+    cache.put(CacheKeyFactory.create(Integer.class, String.class), Object.class);
 
     Class result;
 
@@ -84,7 +84,7 @@ public class CustomConverterContainerTest extends AbstractDozerTest {
 
   @Test
   public void testGetCustomConverter_Miss() {
-    cache.put(CacheKeyFactory.createKey(String.class, Integer.class), Object.class);
+    cache.put(CacheKeyFactory.create(String.class, Integer.class), Object.class);
 
     Class result;
 

@@ -75,4 +75,9 @@ public class MappedFieldsTracker {
   public Object getMappedValue(Object src, Class<?> destType) {
     return getMappedValue(src, destType, null);
   }
+
+    public void clearMap() {
+        mappedFields.clear();
+    }
+
 }

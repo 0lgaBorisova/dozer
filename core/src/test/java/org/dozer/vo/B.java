@@ -15,6 +15,8 @@
  */
 package org.dozer.vo;
 
+import java.util.Arrays;
+
 /**
  * @author wojtek.kiersztyn
  * @author dominic.peciuch
@@ -30,4 +32,10 @@ public class B {
   public void setCs(C[] c) {
     this.cs = c;
   }
+
+    @Override
+    public String toString() {
+        return "B{" + "cs=" + Arrays.toString(cs) + '}';
+    }
+  
 }

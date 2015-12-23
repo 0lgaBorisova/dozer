@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
+import org.dozer.cache.CacheKeyFactory;
 
 /**
  * Internal class for adding implicit field mappings to a ClassMap. Also, builds implicit ClassMap for class mappings
@@ -101,8 +102,8 @@ public final class ClassMapBuilder {
    * @param globalConfiguration
    */
   public static void addDefaultFieldMappings(ClassMappings classMappings, Configuration globalConfiguration) {
-    Set<Entry<String, ClassMap>> entries = classMappings.getAll().entrySet();
-    for (Entry<String, ClassMap> entry : entries) {
+    Set<Entry<CacheKeyFactory.CacheKey, ClassMap>> entries = classMappings.getAll().entrySet();
+    for (Entry<CacheKeyFactory.CacheKey, ClassMap> entry : entries) {
       ClassMap classMap = entry.getValue();
       generateMapping(classMap, globalConfiguration, runTimeGenerators);
     }

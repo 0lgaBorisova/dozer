@@ -332,4 +332,9 @@ public class DozerBeanMapper implements Mapper {
     }
   }
 
+    @Override
+    public void clearMap() {
+        getMappingProcessor().clearMap();
+    }
+
 }

@@ -35,23 +35,24 @@ import java.lang.reflect.Method;
 public class JavaBeanPropertyDescriptor extends GetterSetterPropertyDescriptor {
   private PropertyDescriptor pd;
   private boolean propertyDescriptorsRefreshed;
+  private Method readMethod;
+  private Method writeMethod;
 
   public JavaBeanPropertyDescriptor(Class<?> clazz, String fieldName, boolean isIndexed, int index,
       HintContainer srcDeepIndexHintContainer, HintContainer destDeepIndexHintContainer) {
     super(clazz, fieldName, isIndexed, index, srcDeepIndexHintContainer, destDeepIndexHintContainer);
   }
 
-  @Override
-  public Method getWriteMethod() throws NoSuchMethodException {
-    Method result = getPropertyDescriptor(destDeepIndexHintContainer).getWriteMethod();
-    result = result == null ? ReflectionUtils.getNonStandardSetter(clazz, fieldName) : result;
-    if (result == null) {
-      result = retryMissingMethod(true);
+    @Override
+    public Method getWriteMethod() throws NoSuchMethodException {
+        if (writeMethod == null) {
+            writeMethod = getPropertyDescriptor(destDeepIndexHintContainer).getWriteMethod();
+            writeMethod = writeMethod == null ? ReflectionUtils.getNonStandardSetter(clazz, fieldName) : writeMethod;
+            writeMethod = retryMissingMethod(true);
+        }
+        propertyDescriptorsRefreshed = false;
+        return writeMethod;
     }
-
-    propertyDescriptorsRefreshed = false;
-    return result;
-  }
 
   @Override
   protected String getSetMethodName() throws NoSuchMethodException {
@@ -60,13 +61,14 @@ public class JavaBeanPropertyDescriptor extends GetterSetterPropertyDescriptor {
 
   @Override
   protected Method getReadMethod() throws NoSuchMethodException {
-    Method result = getPropertyDescriptor(srcDeepIndexHintContainer).getReadMethod();
-    if (result == null) {
-      result = retryMissingMethod(false);
-    }
-
-    propertyDescriptorsRefreshed = false;
-    return result;
+      if (readMethod == null) {
+          readMethod = getPropertyDescriptor(srcDeepIndexHintContainer).getReadMethod();
+      }
+      if (readMethod == null) {
+          readMethod = retryMissingMethod(false);
+      }
+      propertyDescriptorsRefreshed = false;
+      return readMethod;
   }
 
   @Override
@@ -105,6 +107,7 @@ public class JavaBeanPropertyDescriptor extends GetterSetterPropertyDescriptor {
   private void refreshPropertyDescriptors() {
     PropertyUtils.clearDescriptors();
     pd = null;
+    readMethod = null;
     propertyDescriptorsRefreshed = true;
   }
 

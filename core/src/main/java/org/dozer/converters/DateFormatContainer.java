@@ -40,6 +40,13 @@ public class DateFormatContainer {
     return dateFormat;
   }
 
+    public String getDfStr() {
+        return dfStr;
+    }
+
+    public void setDfStr(String dfStr) {
+        this.dfStr = dfStr;
+    }
   public void setDateFormat(DateFormat dateFormat) {
     this.dateFormat = dateFormat;
   }

@@ -30,6 +30,8 @@ import org.dozer.vo.DateObjectDest;
 import org.dozer.vo.DateObjectSource;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author dmitry.buzdin

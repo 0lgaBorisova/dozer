@@ -19,6 +19,7 @@ import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertThat;
 
 /**
  *  Tests to confirm that Dozer can map between primitive and wrapper types. E.g.

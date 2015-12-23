@@ -23,6 +23,7 @@ import org.dozer.util.MappingUtils;
 
 import java.util.*;
 import java.util.Map.Entry;
+import org.dozer.cache.CacheKeyFactory;
 
 /**
  * Internal class that loads and parses custom xml mapping files into ClassMap objects. The ClassMap objects returned
@@ -62,7 +63,7 @@ public class CustomMappingsLoader {
     }    
 
     // iterate through the classmaps and set all of the custom converters on them
-    for (Entry<String, ClassMap> entry : customMappings.getAll().entrySet()) {
+    for (Entry<CacheKeyFactory.CacheKey, ClassMap> entry : customMappings.getAll().entrySet()) {
       ClassMap classMap = entry.getValue();
       if (classMap.getCustomConverters() != null) {
         classMap.getCustomConverters().setConverters(new ArrayList<CustomConverterDescription>(customConverterDescriptions));

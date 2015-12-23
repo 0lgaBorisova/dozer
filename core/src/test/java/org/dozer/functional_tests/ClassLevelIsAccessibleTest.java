@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertThat;
 
 /**
  * Tests for situations when the entire class has been declared as accessible

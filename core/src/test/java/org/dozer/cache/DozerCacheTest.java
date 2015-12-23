@@ -68,7 +68,7 @@ public class DozerCacheTest extends AbstractDozerTest {
   @Test
   public void testClear() throws Exception {
     Cache<Object, String> cache = new DozerCache<Object, String>(getRandomString(), 50);
-    Object key = CacheKeyFactory.createKey(String.class, Integer.class);
+    Object key = CacheKeyFactory.create(String.class, Integer.class);
     cache.put(key, "testvalue");
 
     assertEquals("cache should contain entry", 1, cache.getSize());

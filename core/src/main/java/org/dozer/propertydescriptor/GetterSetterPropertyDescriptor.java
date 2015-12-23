@@ -281,14 +281,33 @@ public abstract class GetterSetterPropertyDescriptor extends AbstractPropertyDes
     }
     return result;
   }
+    
+   private static /*нужен ли static?*/
+           ThreadLocal<Wrapper> wrap = new ThreadLocal<Wrapper>() {
 
-  protected void invokeWriteMethod(Object target, Object value) {
-    try {
-      ReflectionUtils.invoke(getWriteMethod(), target, new Object[]{value});
-    } catch (NoSuchMethodException e) {
-      MappingUtils.throwMappingException(e);
+        @Override
+        protected Wrapper initialValue() {
+            return new Wrapper();
+        }
+
+    };
+
+    public static class Wrapper {
+
+        public Object[] arr = new Object[1];
     }
-  }
+
+    protected void invokeWriteMethod(Object target, Object value) {
+        Wrapper get = wrap.get();
+        get.arr[0] = value;
+        try {
+            ReflectionUtils.invoke(getWriteMethod(), target, get.arr);
+        } catch (NoSuchMethodException e) {
+            MappingUtils.throwMappingException(e);
+        } finally {
+            get.arr[0] = null;
+        }
+    }
 
   private DeepHierarchyElement[] getDeepFieldHierarchy(Object obj, HintContainer deepIndexHintContainer) {
     return ReflectionUtils.getDeepFieldHierarchy(obj.getClass(), fieldName, deepIndexHintContainer);

@@ -47,7 +47,7 @@ public final class DestBeanCreator {
           ConstructionStrategies.byFactory(),
           ConstructionStrategies.byConstructor()
   };
-
+static CopyOnWriteArrayList<BeanCreationStrategy> copyOnWriteArrayList= new CopyOnWriteArrayList<BeanCreationStrategy>(Arrays.asList(availableStrategies));
   private DestBeanCreator() {
   }
 
@@ -72,7 +72,7 @@ public final class DestBeanCreator {
     // TODO Directive toString()
     // TODO review and document
 
-    for (BeanCreationStrategy strategy : new CopyOnWriteArrayList<BeanCreationStrategy>(strategies)) {
+    for (BeanCreationStrategy strategy : copyOnWriteArrayList) {
       if (strategy.isApplicable(directive)) {
         return strategy.create(directive);
       }

@@ -15,6 +15,9 @@
  */
 package org.dozer.event;
 
+import org.dozer.classmap.ClassMap;
+import org.dozer.fieldmap.FieldMap;
+
 /**
  * Internal event manager interface. Only intended for internal use.
  * 
@@ -23,5 +26,6 @@ package org.dozer.event;
 public interface EventManager {
 
   void fireEvent(DozerEvent event);
+  void fireEvent(DozerEventType type, ClassMap classMap, FieldMap fieldMap, Object sourceObject, Object destinationObject, Object destinationValue);
 
 }

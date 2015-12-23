@@ -246,12 +246,12 @@ public final class ReflectionUtils {
     // If the class is an interface, use custom method to get all prop descriptors in the inheritance hierarchy.
     // PropertyUtils.getPropertyDescriptors() does not work correctly for interface inheritance. It finds props in the
     // actual interface ok, but does not find props in the inheritance hierarchy.
-    if (objectClass.isInterface()) {
-      return getInterfacePropertyDescriptors(objectClass);
-    } else {
-      return PropertyUtils.getPropertyDescriptors(objectClass);
-    }
-  }
+      if (objectClass.isInterface()) {
+          return getInterfacePropertyDescriptors(objectClass);
+      } else {
+              return PropertyUtils.getPropertyDescriptors(objectClass);
+          }
+      }
 
   static PropertyDescriptor[] getInterfacePropertyDescriptors(Class<?> interfaceClass) {
     List<PropertyDescriptor> propDescriptors = new ArrayList<PropertyDescriptor>();
@@ -324,7 +324,7 @@ public final class ReflectionUtils {
     }
   }
 
-  public static Object invoke(Method method, Object obj, Object[] args) {
+  public static Object invoke(Method method, Object obj, Object... args) {
     Object result = null;
     try {
       method.setAccessible(true);

@@ -64,5 +64,6 @@ public interface Mapper {
    * @throws MappingException
    */
   void map(Object source, Object destination, String mapId) throws MappingException;
-
+  
+    void clearMap();
 }

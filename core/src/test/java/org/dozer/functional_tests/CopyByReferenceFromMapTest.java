@@ -21,6 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Dmitry Buzdin

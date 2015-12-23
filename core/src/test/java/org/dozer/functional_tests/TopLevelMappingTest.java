@@ -20,6 +20,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author dmitry.buzdin
